@@ -1,0 +1,16 @@
+@startuml
+title Sequence Diagram Template
+
+actor User
+participant "Frontend" as FE
+participant "Backend" as BE
+database "Database" as DB
+
+User -> FE : Click button
+FE -> BE : Send request
+BE -> DB : Query data
+DB --> BE : Return results
+BE --> FE : Send response
+FE --> User : Show result
+
+@enduml

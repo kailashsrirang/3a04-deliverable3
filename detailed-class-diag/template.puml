@@ -1,0 +1,41 @@
+@startuml
+title Detailed Class Diagram
+
+class MainClass {
+    -id : int
+    -name : String
+    -status : Status
+    +MainClass(id : int, name : String)
+    +getId() : int
+    +getName() : String
+    +setName(name : String) : void
+    +performAction() : boolean
+}
+
+class HelperClass {
+    -value : double
+    +calculate() : double
+}
+
+interface ServiceInterface {
+    +execute() : void
+}
+
+abstract class BaseClass {
+    #createdAt : Date
+    +save() : void
+    {abstract} +validate() : boolean
+}
+
+enum Status {
+    ACTIVE
+    INACTIVE
+    PENDING
+}
+
+MainClass --|> BaseClass
+MainClass ..|> ServiceInterface
+MainClass "1" *-- "0..*" HelperClass : contains
+MainClass ..> Status : uses
+
+@enduml
