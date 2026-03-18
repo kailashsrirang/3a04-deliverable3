@@ -26,6 +26,7 @@ activate LM
 A -> A : Enter credentials
 A -> RM : View RBAC roles
 RM -> AM : Authenticate
+AM -> AM : SSO
 AM -> RM : Authenticated
 RM -> A : Success
 
