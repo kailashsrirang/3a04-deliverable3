@@ -1,0 +1,27 @@
+@startuml
+
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+
+[*] --> thirdPartySSO
+thirdPartySSO : user_information
+thirdPartySSO : ----
+thirdPartySSO : send information to third party SSO
+
+thirdPartySSO --> authSuccess
+authSuccess : success_message
+authSuccess : ----
+authSuccess : display success message
+authSuccess : create authentication token
+authSuccess --> [*]
+
+thirdPartySSO --> authError
+authError : error_message
+authError : timeout_message
+authError : ----
+authError : display error message
+authError --> thirdPartySSO
+
+@enduml

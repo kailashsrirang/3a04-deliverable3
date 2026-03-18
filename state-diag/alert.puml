@@ -1,0 +1,29 @@
+' Alert Management Controller
+@startuml
+
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+
+state end1 <<end>>
+state end2 <<end>>
+
+[*] --> triggerAlert
+triggerAlert : alert_thresholds
+triggerAlert : validated_data
+triggerAlert : ----
+triggerAlert : display alert
+triggerAlert : log in alert information
+triggerAlert --> end1
+
+[*] --> editThreshold
+editThreshold : alert_thresholds
+editThreshold : alert_type
+editThreshold : new_threshold
+editThreshold : ----
+editThreshold : display confirmation
+editThreshold : edit threshold
+editThreshold --> end2
+
+@enduml

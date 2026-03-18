@@ -1,0 +1,30 @@
+@startuml
+
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+
+state end1 <<end>>
+state end2 <<end>>
+state end3 <<end>>
+
+[*] --> publicClient
+publicClient : validated_data
+publicClient : ----
+publicClient : display data to public client
+publicClient --> end1
+
+[*] --> publicAPI
+publicAPI : validated_data
+publicAPI : ----
+publicAPI : send data to public API
+publicAPI --> end2
+
+[*] --> webDashboard
+webDashboard : validated_data
+webDashboard : ----
+webDashboard : display data to web dashboard
+webDashboard --> end3
+
+@enduml
