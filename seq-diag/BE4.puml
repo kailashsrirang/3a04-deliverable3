@@ -1,0 +1,61 @@
+' BE4. Assign RBAC roles
+@startuml
+
+hide footbox
+
+skinparam ParticipantBorderColor transparent
+skinparam ParticipantBackgroundColor transparent
+skinparam ActorBorderColor transparent
+skinparam ActorBackgroundColor transparent
+
+participant "Administrator" as A
+participant "Role Management" as RM
+participant "Authentication Management" as AM
+participant "Log Management" as LM
+participant "Logs" as DB
+participant "RBAC role" as RBAC
+
+
+activate A
+activate RM
+activate AM
+activate RBAC
+activate DB
+activate LM
+
+A -> A : Enter credentials
+A -> RM : View RBAC roles
+RM -> AM : Authenticate
+AM -> RM : Authenticated
+RM -> A : Success
+
+A -> RM : View RBAC roles
+RM -> RBAC : Get user role data
+RBAC -> RM : Return user role data
+RM -> RM : Verfiy user privledges
+RM -> RBAC : Get requested data
+RBAC -> RM : Return requested data
+RM -> A : Return data
+
+A->AM : Modify/Add/Delete Roles
+AM->AM : Validate request
+AM -> RBAC : Update roles
+AM -> LM : Log event
+LM -> DB : Create new log
+DB -> LM : Success
+LM -> AM : Success
+AM -> A : Success
+
+
+
+deactivate A
+deactivate AM
+deactivate RBAC
+deactivate DB
+deactivate LM
+
+
+
+
+
+@enduml

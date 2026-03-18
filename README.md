@@ -12,7 +12,7 @@ On macOS, a common install path is Homebrew:
 
 brew install openjdk
 
-Then re-open your terminal and run:
+Then re-open your teAMinal and run:
 
 java -version
 2) Install VS Code PlantUML extension

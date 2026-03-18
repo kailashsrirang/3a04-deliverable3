@@ -1,0 +1,56 @@
+' BE5. View audit logs
+@startuml
+
+hide footbox
+
+skinparam ParticipantBorderColor transparent
+skinparam ParticipantBackgroundColor transparent
+skinparam ActorBorderColor transparent
+skinparam ActorBackgroundColor transparent
+
+participant "Administrator" as A
+participant "Role Management" as AM
+participant "Authentication Management" as AM
+participant "Log Management" as LM
+participant "Logs" as DB
+participant "RBAC role" as RBAC
+
+
+activate A
+activate AM
+activate AM
+activate RBAC
+activate DB
+activate LM
+
+A -> AM : Enter credentials
+A -> AM : View alerts
+AM -> AM : Authenticate
+AM -> AM : Authenticated
+AM -> A : Success Message
+A -> AM : View RBAC rols
+AM -> RBAC : Get role data
+AM -> A : Return role data
+
+A->AM : Modify/Add/Delete Roles
+AM->AM : Validate request
+AM -> RBAC : Update roles
+AM -> LM : Log event
+LM -> DB : Create new log
+DB -> LM : Success
+LM -> AM : Success
+AM -> A : Success
+
+
+
+deactivate A
+deactivate AM
+deactivate RBAC
+deactivate DB
+deactivate LM
+
+
+
+
+
+@enduml

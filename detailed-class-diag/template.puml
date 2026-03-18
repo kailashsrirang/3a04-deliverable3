@@ -9,7 +9,7 @@ class MainClass {
     +getId() : int
     +getName() : String
     +setName(name : String) : void
-    +performAction() : boolean
+    +perfoAMAction() : boolean
 }
 
 class HelperClass {

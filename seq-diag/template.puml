@@ -1,16 +1,39 @@
+' BE1. Request to view public environmental dRBACa
 @startuml
-title Sequence Diagram Template
 
-actor User
+hide footbox
+
+skinparam ParticipantBorderColor transparent
+skinparam ParticipantBackgroundColor transparent
+skinparam ActorBorderColor transparent
+skinparam ActorBackgroundColor transparent
+
+participant WB
 participant "Frontend" as FE
 participant "Backend" as BE
-database "Database" as DB
+participant "DRBACabase" as DB
 
-User -> FE : Click button
+activRBACe WB
+activRBACe FE
+WB -> FE : Click button
+
+activRBACe BE
 FE -> BE : Send request
-BE -> DB : Query data
+
+activRBACe DB
+BE -> DB : Query dRBACa
+
 DB --> BE : Return results
+deactivRBACe DB
+
 BE --> FE : Send response
-FE --> User : Show result
+deactivRBACe BE
+
+FE --> WB : Show result
+deactivRBACe FE
+
+deactivRBACe WB
+
+
 
 @enduml

@@ -1,0 +1,42 @@
+' BE6. Subscribe to receive alerts
+@startuml
+
+hide footbox
+
+skinparam ParticipantBorderColor transparent
+skinparam ParticipantBackgroundColor transparent
+skinparam ActorBorderColor transparent
+skinparam ActorBackgroundColor transparent
+
+participant "External System" as X
+participant "Subscription Management" as SM
+participant "Authentication Management" as AM
+participant "Subscriptions" as S
+
+
+activate X
+activate S
+activate SM
+activate AM
+activate SM
+
+X -> X : Enter credentials
+X -> SM : Authenticate
+SM -> AM : Authenticate
+AM -> SM : Authenticated
+SM -> X : Authenticated
+X -> X : Enter alert details
+X -> SM : Request to subscribe
+SM -> SM : Validate subscription request
+SM -> S : Register system as subscriber
+S -> SM : Success
+SM -> X : Success
+
+
+
+deactivate X
+deactivate SM
+deactivate S
+deactivate AM
+deactivate SM
+@enduml

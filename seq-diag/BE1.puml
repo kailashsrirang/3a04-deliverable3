@@ -1,0 +1,35 @@
+' BE1. Request to view public environmental data
+@startuml
+
+hide footbox
+
+skinparam ParticipantBorderColor transparent
+skinparam ParticipantBackgroundColor transparent
+skinparam ActorBorderColor transparent
+skinparam ActorBackgroundColor transparent
+
+participant "Public Client/Third Party App" as WB
+participant "Data Management" as DM
+participant "Authentication Management" as AM
+participant "Environment Data" as ED
+
+
+activate WB
+activate ED
+activate DM
+activate AM
+
+WB -> WB : Enter credentials
+WB -> DM : API read request
+DM -> AM : Authenticate
+AM -> AM : SSO
+AM -> DM : Authenticated
+DM -> ED : Fetch data
+ED -> DM : Return data
+DM -> WB : Return data
+deactivate AM
+deactivate WB
+deactivate ED
+
+
+@enduml

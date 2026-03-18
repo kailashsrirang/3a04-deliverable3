@@ -1,0 +1,72 @@
+' BE3. Manage Alerts
+@startuml
+
+hide footbox
+
+skinparam ParticipantBorderColor transparent
+skinparam ParticipantBackgroundColor transparent
+skinparam ActorBorderColor transparent
+skinparam ActorBackgroundColor transparent
+
+participant "Administrator" as A
+participant "Alert Management" as AM
+participant "Authentication Management" as AuthM
+participant "Log Management" as LM
+participant "Role Management" as RM
+participant "Logs" as DB
+participant "Alert Thresholds" as AT
+participant "RBAC Roles" as RBAC
+
+
+
+activate A
+activate AM
+activate AuthM
+activate AT
+activate DB
+activate LM
+activate RM
+activate RBAC
+
+A -> AM : Enter credentials
+A -> AM : View alerts
+AM -> AuthM : Authenticate
+AuthM -> AM : Authenticated
+AM -> A : Success Message
+
+A -> AM : View alert threshold data
+AM -> RM : Validate user priveldges
+RM -> RBAC : Get user role data
+RBAC -> RM : Return user role data
+RM -> RM : Verfiy user privledges
+RM -> AM : Success
+AM -> AT : Get alert threshold data
+AT  -> AM : Return alert threshold data
+AM -> A : Return alert threshold data
+
+
+A->AM : Modify/Add/Delete Alerts
+AM->AM : Validate request
+AM -> AT : Update data
+AM -> LM : Log event
+LM -> DB : Create new log
+DB -> LM : Success
+LM -> AM : Success
+AM -> A : Success
+
+
+
+deactivate A
+deactivate AM
+deactivate AuthM
+deactivate AT
+deactivate DB
+deactivate LM
+deactivate RM
+deactivate RBAC
+
+
+
+
+
+@enduml
