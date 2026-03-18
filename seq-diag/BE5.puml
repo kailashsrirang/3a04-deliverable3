@@ -9,42 +9,35 @@ skinparam ActorBorderColor transparent
 skinparam ActorBackgroundColor transparent
 
 participant "Administrator" as A
-participant "Role Management" as AM
-participant "Authentication Management" as AM
 participant "Log Management" as LM
+participant "Authentication Management" as AM
+participant "Role Management" as RM
 participant "Logs" as DB
 participant "RBAC role" as RBAC
 
 
 activate A
-activate AM
+activate RM
 activate AM
 activate RBAC
 activate DB
 activate LM
 
-A -> AM : Enter credentials
-A -> AM : View alerts
-AM -> AM : Authenticate
-AM -> AM : Authenticated
-AM -> A : Success Message
-A -> AM : View RBAC rols
-AM -> RBAC : Get role data
-AM -> A : Return role data
-
-A->AM : Modify/Add/Delete Roles
-AM->AM : Validate request
-AM -> RBAC : Update roles
-AM -> LM : Log event
-LM -> DB : Create new log
-DB -> LM : Success
-LM -> AM : Success
-AM -> A : Success
-
-
+A -> A : Enter credentials
+A -> LM : View logs
+LM -> AM : Authenticate
+AM -> LM : Success Message
+LM -> RM : Verify privledges
+RM -> RBAC : Get user priveledges
+RBAC -> RM : Return user privledges
+RM -> RM : Verify
+RM -> LM : Success
+LM -> DB : Get logs
+DB -> LM : Return logs
+LM -> A : Return logs
 
 deactivate A
-deactivate AM
+deactivate RM
 deactivate RBAC
 deactivate DB
 deactivate LM

@@ -1,0 +1,39 @@
+' BE1. Request to view public environmental data
+@startuml
+
+hide footbox
+
+skinparam ParticipantBorderColor transparent
+skinparam ParticipantBackgroundColor transparent
+skinparam ActorBorderColor transparent
+skinparam ActorBackgroundColor transparent
+
+participant WB
+participant "Frontend" as FE
+participant "Backend" as BE
+participant "Database" as DB
+
+activate WB
+activate FE
+WB -> FE : Click button
+
+activate BE
+FE -> BE : Send request
+
+activate DB
+BE -> DB : Query data
+
+DB --> BE : Return results
+deactivate DB
+
+BE --> FE : Send response
+deactivate BE
+
+FE --> WB : Show result
+deactivate FE
+
+deactivate WB
+
+
+
+@enduml
