@@ -26,7 +26,10 @@ activate LM
 A -> A : Enter credentials
 A -> LM : View logs
 LM -> AM : Authenticate
-AM -> LM : Success Message
+AM -> AM : SSO
+AM -> LM : Authenticated
+LM -> A : Success
+A -> LM : View logs
 LM -> RM : Verify privledges
 RM -> RBAC : Get user priveledges
 RBAC -> RM : Return user privledges

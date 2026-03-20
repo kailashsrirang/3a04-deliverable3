@@ -31,7 +31,7 @@ activate RBAC
 A -> AM : Enter credentials
 A -> AM : View alerts
 AM -> AuthM : Authenticate
-AM -> AM : SSO
+AuthM -> AuthM : SSO
 AuthM -> AM : Authenticated
 AM -> A : Success Message
 

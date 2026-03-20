@@ -23,6 +23,7 @@ activate SM
 X -> X : Enter credentials
 X -> SM : Authenticate
 SM -> AM : Authenticate
+AM -> AM : SSO
 AM -> SM : Authenticated
 SM -> X : Authenticated
 X -> X : Enter alert details
