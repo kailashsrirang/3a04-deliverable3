@@ -1,0 +1,40 @@
+@startuml
+
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+
+state end1 <<end>>
+state end2 <<end>>
+
+[*] --> viewRoles
+viewRoles : rbac_roles
+viewRoles : ----
+viewRoles : display rbac_roles
+viewRoles --> end1
+
+[*] --> updateRoles
+updateRoles : user_information
+updateRoles : rbac_roles
+updateRoles : new_permissions
+updateRoles : ----
+updateRoles :
+
+updateRoles --> updateSuccess
+updateSuccess : success_message
+updateSuccess : ----
+updateSuccess : display success message
+updateSuccess : log in rbac_roles
+updateSuccess : log in rbac_access_logs
+updateSuccess --> end2
+
+updateRoles --> updateError
+updateError : error_message
+updateError : timeout_message
+updateError : ----
+updateError : display error message
+updateError : log in rbac_access_logs
+updateError --> updateRoles
+
+@enduml

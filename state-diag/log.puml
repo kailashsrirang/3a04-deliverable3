@@ -1,0 +1,28 @@
+@startuml
+
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+
+[*] --> viewLogs
+viewLogs : user_information
+viewLogs : logs
+viewLogs : ----
+viewLogs :
+
+viewLogs --> logSuccess
+logSuccess : success_message
+logSuccess : ----
+logSuccess : display success message
+logSuccess : display logs
+logSuccess --> [*]
+
+viewLogs --> logError
+logError : error_message
+logError : timeout_message
+logError : ----
+logError : display error message
+logError --> viewLogs
+
+@enduml

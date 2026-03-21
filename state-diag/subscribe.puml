@@ -1,0 +1,39 @@
+' Subscription Management Controller
+@startuml
+
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+
+state end1 <<end>>
+state end2 <<end>>
+
+[*] --> subscribeAlert
+subscribeAlert : user_information
+subscribeAlert : alert_type
+subscribeAlert : ----
+subscribeAlert :
+
+subscribeAlert --> subscribeSuccess
+subscribeSuccess : success_message
+subscribeSuccess : ----
+subscribeSuccess : display success message
+subscribeSuccess : log in subscriptions database
+subscribeSuccess --> end1
+
+subscribeAlert --> subscribeError
+subscribeError : error_message
+subscribeError : timeout_message
+subscribeError : ----
+subscribeError : display error message
+subscribeError --> subscribeAlert
+
+[*] --> notifySubscribers
+notifySubscribers : user_information
+notifySubscribers : alert_type
+notifySubscribers : ----
+notifySubscribers : send data to users
+notifySubscribers --> end2
+
+@enduml

@@ -1,0 +1,16 @@
+' Data Validator Management Controller
+@startuml
+
+skinparam State {
+  BackgroundColor white
+  BorderColor black
+}
+
+[*] --> dataValidator
+dataValidator : telemetry_data
+dataValidator : ----
+dataValidator : validate data
+dataValidator : send data to Data Management Controller
+dataValidator --> [*]
+
+@enduml
