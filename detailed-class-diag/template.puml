@@ -1,7 +1,7 @@
 
 
 
-
+@startuml
 package "Authentication Agent" {
 
     class AuthenticationDisplay <<Presentation>> {
@@ -315,4 +315,4 @@ package "RBAC Agent" {
     AlertController ..> LogController : logEvent()
     SubscriptionController ..> LogController : logEvent()
 
-
+@enduml
