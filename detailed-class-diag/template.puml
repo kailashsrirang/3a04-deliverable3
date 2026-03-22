@@ -1,41 +1,94 @@
 @startuml
 title Detailed Class Diagram
 
-class MainClass {
-    -id : int
-    -name : String
-    -status : Status
-    +MainClass(id : int, name : String)
-    +getId() : int
-    +getName() : String
-    +setName(name : String) : void
-    +perfoAMAction() : boolean
+class DataValidator {
+    +validateData() : boolean
+    -storeData() : boolean
 }
 
-class HelperClass {
-    -value : double
-    +calculate() : double
+class DataController {
+    -storeData : DataViews
+    +storeData() : boolean
+    +getData() : JSON
+    -filterData() : JSON
+    -authenticate() : boolean
+    -fetchData() : JSON
+    - dataDB : Enviroment Data Database
 }
 
-interface ServiceInterface {
-    +execute() : void
+abstract DataDisplay{
+    + displayMessage() : 
+    + dataType: DataViews
+    +getData() : JSON
+    +outputData() : JSON
 }
 
-abstract class BaseClass {
-    #createdAt : Date
-    +save() : void
-    {abstract} +validate() : boolean
+class ReadOnlyApi{
+    +getData() : JSON
 }
 
-enum Status {
-    ACTIVE
-    INACTIVE
-    PENDING
+class WebDashBoard{
+    +getData() : JSON
 }
 
-MainClass --|> BaseClass
-MainClass ..|> ServiceInterface
-MainClass "1" *-- "0..*" HelperClass : contains
-MainClass ..> Status : uses
+WebDashBoard --|> DataDisplay
+ReadOnlyApi --|> DataDisplay
+DataDisplay ..> DataController 
+
+
+interface DisplayStatusMessage{
+    +displayMessage() : void
+}
+
+class ErrorMessage{
+    -message: String
+    +displayMessage() : void
+}
+class SuccessMessage{
+    -message: String
+    +displayMessage() : void
+}
+class TimeoutMessage{
+    -message: String
+    +displayMessage() : void
+}
+TimeoutMessage --|> DisplayStatusMessage
+SuccessMessage --|> DisplayStatusMessage
+ErrorMessage --|> DisplayStatusMessage
+
+enum DataViews {
+    PUBLIC
+    PRIVATE
+}
+
+
+
+' authentication
+class AuthenticationController {
+    +authenticate() : boolean
+    -displayMessage() : String
+    -authToken : <TOKEN>
+}
+interface AuthenticationMessage{
+    +displayMessage() : void
+}
+class AuthenticationSuccessMessage{
+    -message: String
+    +displayMessage() : void
+}
+class AuthenticationErrorMessage{
+    -message: String
+    +displayMessage() : void
+}
+AuthenticationSuccessMessage --|>  AuthenticationMessage
+AuthenticationErrorMessage --|> AuthenticationMessage
+
+
+DataValidator ..> DataController 
+DataDisplay "1" *-- "1" DataViews 
+DataDisplay ..> DisplayStatusMessage 
+DataController ..> AuthenticationController 
+AuthenticationController ..> AuthenticationMessage 
+
 
 @enduml
