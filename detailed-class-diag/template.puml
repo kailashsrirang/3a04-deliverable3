@@ -17,7 +17,7 @@ class DataController {
 }
 
 abstract DataDisplay{
-    + displayMessage() : 
+    + displayMessage() : void
     + dataType: DataViews
     +getData() : JSON
     +outputData() : JSON
@@ -52,9 +52,9 @@ class TimeoutMessage{
     -message: String
     +displayMessage() : void
 }
-TimeoutMessage --|> DisplayStatusMessage
-SuccessMessage --|> DisplayStatusMessage
-ErrorMessage --|> DisplayStatusMessage
+TimeoutMessage ..|> DisplayStatusMessage
+SuccessMessage ..|> DisplayStatusMessage
+ErrorMessage ..|> DisplayStatusMessage
 
 enum DataViews {
     PUBLIC
@@ -66,7 +66,7 @@ enum DataViews {
 ' authentication
 class AuthenticationController {
     +authenticate() : boolean
-    -displayMessage() : String
+    -displayMessage() : void
     -authToken : <TOKEN>
 }
 interface AuthenticationMessage{
@@ -80,15 +80,60 @@ class AuthenticationErrorMessage{
     -message: String
     +displayMessage() : void
 }
-AuthenticationSuccessMessage --|>  AuthenticationMessage
+AuthenticationSuccessMessage --|> AuthenticationMessage
 AuthenticationErrorMessage --|> AuthenticationMessage
-
 
 DataValidator ..> DataController 
 DataDisplay "1" *-- "1" DataViews 
 DataDisplay ..> DisplayStatusMessage 
 DataController ..> AuthenticationController 
 AuthenticationController ..> AuthenticationMessage 
+
+class AlertController {
+    -alertInfoDB: Database
+    -alertThresholdDB: Database
+    +viewAlerts():JSON
+    -authenticate() : boolean
+    -verifyRole(): boolean
+    +modifyAlerts(): boolean
+    -triggerAlert(): void
+    -displayMessage(): void
+    -logEvent() : boolean
+}
+AlertController ..> DisplayStatusMessage 
+AlertController ..> AuthenticationController 
+
+class SubscriptionController {
+    -subscriptionsDB: Database
+    +notifySubscribers(): void
+    +subscribe(): boolean
+    -authenticate() : boolean
+    -logEvent() : boolean
+}
+AlertController ..> SubscriptionController 
+
+class LogController {
+    -logsDB: Database
+    +viewLogs() : JSON
+    -authenticate() : boolean
+    -verifyRole(): boolean
+    +logEvent() : boolean
+}
+AlertController ..> LogController 
+SubscriptionController ..> LogController 
+
+class RBACController {
+    -rbacDB: Database
+    +viewRoles() : List<Role>
+    +updateRole(PersonID,NewRole) : boolean
+    -authenticate() : boolean
+    +logEvent() : boolean
+}
+AlertController ..> RBACController 
+LogController ..> RBACController 
+
+
+
 
 
 @enduml
