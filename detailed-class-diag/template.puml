@@ -125,7 +125,7 @@ package "Alert Agent" {
         -verifyRole() : boolean
         +modifyAlerts() : boolean
         -triggerAlert() : void
-        -logEvent() : boolean
+        -adaptiveAlertThresholds() : void
     }
 
     class AlertModel <<Abstraction>> {
@@ -202,7 +202,6 @@ package "Subscription Agent" {
         +notifySubscribers() : void
         +subscribe() : boolean
         -authenticate() : boolean
-        -logEvent() : boolean
     }
 
     class SubscriptionModel <<Abstraction>> {
@@ -248,13 +247,13 @@ package "Log Agent" {
         +viewLogs() : JSON
         -authenticate() : boolean
         -verifyRole() : boolean
-        +logEvent() : boolean
+        +logEvent(Event) : boolean
     }
 
     class LogModel <<Abstraction>> {
         -logsDB : LogsDatabase
         +viewLogs() : JSON
-        +logEvent() : boolean
+        +logEvent(Event) : boolean
     }
 
     ' LogSuccessDisplay --|> LogStatusDisplay
@@ -294,7 +293,6 @@ package "RBAC Agent" {
         +viewRoles() : JSON
         +updateRole(PersonID, NewRole) : boolean
         -authenticate() : boolean
-        +logEvent() : boolean
         +verifyRole() : boolean
     }
 
