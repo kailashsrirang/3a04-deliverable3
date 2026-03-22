@@ -11,14 +11,14 @@ thirdPartySSO : user_information
 thirdPartySSO : ----
 thirdPartySSO : send information to third party SSO
 
-thirdPartySSO --> authSuccess
+thirdPartySSO --> authSuccess : Success
 authSuccess : success_message
 authSuccess : ----
 authSuccess : display success message
 authSuccess : create authentication token
 authSuccess --> [*]
 
-thirdPartySSO --> authError
+thirdPartySSO --> authError : Error
 authError : error_message
 authError : timeout_message
 authError : ----

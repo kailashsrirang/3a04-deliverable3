@@ -18,10 +18,9 @@ viewRoles --> end1
 updateRoles : user_information
 updateRoles : rbac_roles
 updateRoles : new_permissions
-updateRoles : ----
-updateRoles :
+updateRoles : ----\n
 
-updateRoles --> updateSuccess
+updateRoles --> updateSuccess : Success
 updateSuccess : success_message
 updateSuccess : ----
 updateSuccess : display success message
@@ -29,7 +28,7 @@ updateSuccess : log in rbac_roles
 updateSuccess : log in rbac_access_logs
 updateSuccess --> end2
 
-updateRoles --> updateError
+updateRoles --> updateError : Error
 updateError : error_message
 updateError : timeout_message
 updateError : ----

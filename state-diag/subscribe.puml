@@ -12,17 +12,16 @@ state end2 <<end>>
 [*] --> subscribeAlert
 subscribeAlert : user_information
 subscribeAlert : alert_type
-subscribeAlert : ----
-subscribeAlert :
+subscribeAlert : ----\n
 
-subscribeAlert --> subscribeSuccess
+subscribeAlert --> subscribeSuccess : Success
 subscribeSuccess : success_message
 subscribeSuccess : ----
 subscribeSuccess : display success message
 subscribeSuccess : log in subscriptions database
 subscribeSuccess --> end1
 
-subscribeAlert --> subscribeError
+subscribeAlert --> subscribeError : Error
 subscribeError : error_message
 subscribeError : timeout_message
 subscribeError : ----

@@ -8,17 +8,16 @@ skinparam State {
 [*] --> viewLogs
 viewLogs : user_information
 viewLogs : logs
-viewLogs : ----
-viewLogs :
+viewLogs : ----\n
 
-viewLogs --> logSuccess
+viewLogs --> logSuccess : Success
 logSuccess : success_message
 logSuccess : ----
 logSuccess : display success message
 logSuccess : display logs
 logSuccess --> [*]
 
-viewLogs --> logError
+viewLogs --> logError : Error
 logError : error_message
 logError : timeout_message
 logError : ----
