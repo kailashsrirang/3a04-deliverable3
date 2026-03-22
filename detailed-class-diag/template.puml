@@ -1,139 +1,334 @@
-@startuml
-title Detailed Class Diagram
 
-class DataValidator {
-    +validateData() : boolean
-    -storeData() : boolean
+
+
+
+package "Authentication Agent" {
+
+    class AuthenticationDisplay <<Presentation>> {
+        +displayMessage() : void
+        +login() : boolean
+    }
+
+    class AuthenticationController <<Control>> {
+        +authenticate() : TOKEN
+        -storeToken(TOKEN) : boolean
+        -getToken() : TOKEN
+        +validateToken() : boolean
+    }
+
+    class AuthenticationModel <<Abstraction>> {
+        -authToken : TOKEN
+        +getToken() : TOKEN
+        +setToken() : boolean
+    }
+
+    abstract class AuthenticationMessage {
+        +displayMessage() : void
+    }
+
+    class AuthenticationSuccessMessage {
+        -message : String
+        +displayMessage() : void
+    }
+
+    class AuthenticationErrorMessage {
+        -message : String
+        +displayMessage() : void
+    }
+
+    AuthenticationSuccessMessage --|>AuthenticationMessage
+    AuthenticationErrorMessage --|> AuthenticationMessage
+
+    AuthenticationDisplay ..> AuthenticationController
+    AuthenticationDisplay ..> AuthenticationMessage
+
+    AuthenticationController ..> AuthenticationModel
 }
 
-class DataController {
-    -storeData : DataViews
-    +storeData() : boolean
-    +getData() : JSON
-    -filterData() : JSON
-    -authenticate() : boolean
-    -fetchData() : JSON
-    - dataDB : Enviroment Data Database
+package "Data Agent" {
+
+    class DataValidatorController <<Control>> {
+        +validateData() : boolean
+        +forwardValidatedData() : boolean
+    }
+
+    class DataValidatorModel <<Abstraction>> {
+        +checkDataFormat() : boolean
+        +checkDataRange() : boolean
+    }
+
+    class DataController <<Control>> {
+        -currentView : DataViews
+        +storeData() : boolean
+        +getData() : JSON
+        -filterData() : JSON
+        -authenticate() : boolean
+        -fetchData() : JSON
+    }
+
+    class DataModel <<Abstraction>> {
+        -dataDB : EnvironmentalDataDatabase
+        +storeData() : boolean
+        +fetchData() : JSON
+        +filterData() : JSON
+    }
+
+    abstract class DataDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+
+    class ReadOnlyApi <<Presentation>> {
+        +displayMessage() : void
+    }
+
+    class WebDashBoard <<Presentation>> {
+        +displayMessage() : void
+    }
+
+    class EnvironmentalDataDatabase {
+    }
+
+    enum DataViews {
+        PUBLIC
+        PRIVATE
+    }
+
+    WebDashBoard --|> DataDisplay
+    ReadOnlyApi --|> DataDisplay
+
+    DataDisplay ..> DataController
+
+    DataController ..> DataModel : fetchData()
+    DataController ..> DataValidatorController : validateData()
+
+    DataValidatorController ..> DataValidatorModel
+    DataValidatorController ..> DataController : storeData()
+
+    DataModel *-- EnvironmentalDataDatabase
+
+    ' DataController *-- DataViews
 }
 
-abstract DataDisplay{
-    + displayMessage() : void
-    + dataType: DataViews
-    +getData() : JSON
-    +outputData() : JSON
+
+
+package "Alert Agent" {
+
+    class AlertDisplay <<Presentation>> {
+        +viewAlerts() : JSON
+        +modifyAlerts() : boolean
+        +displayMessage() : void
+    }
+
+    class AlertController <<Control>> {
+        +viewAlerts() : JSON
+        -verifyRole() : boolean
+        +modifyAlerts() : boolean
+        -triggerAlert() : void
+        -logEvent() : boolean
+    }
+
+    class AlertModel <<Abstraction>> {
+        -alertInfoDB : AlertInfoDatabase
+        -alertThresholdDB : AlertThresholdDatabase
+        -monitorValues() : void
+        +viewAlerts() : JSON
+        +modifyAlerts() : boolean
+    }
+
+    class AlertInfoDatabase {
+        +getAlerts(): JSON
+    }
+
+    class AlertThresholdDatabase {
+        +getAlertThreshold(): JSON
+
+    }
+
+    abstract class AlertDisplayMessage <<Presentation>> {
+        +displayMessage() : void
+    }
+
+    class AlertSuccessMessage <<Presentation>> {
+        -message : String
+        +displayMessage() : void
+    }
+
+    class AlertErrorMessage <<Presentation>> {
+        -message : String
+        +displayMessage() : void
 }
 
-class ReadOnlyApi{
-    +getData() : JSON
-}
-
-class WebDashBoard{
-    +getData() : JSON
-}
-
-WebDashBoard --|> DataDisplay
-ReadOnlyApi --|> DataDisplay
-DataDisplay ..> DataController 
+    AlertErrorMessage --|>  AlertDisplayMessage
+    AlertSuccessMessage --|> AlertDisplayMessage
+    AlertDisplay *-- AlertDisplayMessage
 
 
-interface DisplayStatusMessage{
-    +displayMessage() : void
-}
+    AlertDisplay <..> AlertController
 
-class ErrorMessage{
-    -message: String
-    +displayMessage() : void
-}
-class SuccessMessage{
-    -message: String
-    +displayMessage() : void
-}
-class TimeoutMessage{
-    -message: String
-    +displayMessage() : void
-}
-TimeoutMessage ..|> DisplayStatusMessage
-SuccessMessage ..|> DisplayStatusMessage
-ErrorMessage ..|> DisplayStatusMessage
+    AlertController ..> AlertModel
+    AlertController ..> SubscriptionController : notifySubscribers()
 
-enum DataViews {
-    PUBLIC
-    PRIVATE
+    AlertModel *-- AlertInfoDatabase
+    AlertModel *-- AlertThresholdDatabase
 }
 
 
 
-' authentication
-class AuthenticationController {
-    +authenticate() : boolean
-    -displayMessage() : void
-    -authToken : <TOKEN>
+
+package "Subscription Agent" {
+
+    abstract class SubscriptionStatusDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+    class SubscriptionSuccessDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+    class SubscriptionFailedDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+
+    class SubscriptionDisplay <<Presentation>> {
+        +subscribe() : boolean
+        +displayMessage() : void
+    }
+
+    class SubscriptionController <<Control>> {
+        +notifySubscribers() : void
+        +subscribe() : boolean
+        -authenticate() : boolean
+        -logEvent() : boolean
+    }
+
+    class SubscriptionModel <<Abstraction>> {
+        -subscriptionsDB : SubscriptionsDatabase
+        +subscribe() : boolean
+        +getSubscribers() : JSON
+    }
+
+    SubscriptionSuccessDisplay --|> SubscriptionStatusDisplay
+    SubscriptionFailedDisplay --|> SubscriptionStatusDisplay
+
+
+    SubscriptionDisplay ..> SubscriptionController
+    SubscriptionDisplay *.. SubscriptionStatusDisplay
+
+    SubscriptionController ..> SubscriptionModel
+
 }
-interface AuthenticationMessage{
-    +displayMessage() : void
+
+
+package "Log Agent" {
+
+    abstract class LogStatusDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+    class LogSuccessDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+    class LogFailedDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+
+    class LogDisplay <<Presentation>> {
+        +viewLogs() : JSON
+        +displayMessage() : void
+    }
+
+    class LogController <<Control>> {
+        +viewLogs() : JSON
+        -authenticate() : boolean
+        -verifyRole() : boolean
+        +logEvent() : boolean
+    }
+
+    class LogModel <<Abstraction>> {
+        -logsDB : LogsDatabase
+        +viewLogs() : JSON
+        +logEvent() : boolean
+    }
+
+    LogSuccessDisplay --|> LogStatusDisplay
+    LogFailedDisplay --|> LogStatusDisplay
+
+    LogDisplay ..> LogController
+    LogDisplay *..> LogStatusDisplay
+
+    LogController ..> LogModel
+
 }
-class AuthenticationSuccessMessage{
-    -message: String
-    +displayMessage() : void
+
+
+package "RBAC Agent" {
+
+    abstract class RBACStatusDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+    class RBACSuccessDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+    class RBACFailedDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
+    }
+
+    class RBACDisplay <<Presentation>> {
+        +viewRoles() : JSON
+        +updateRole(PersonID, NewRole) : boolean
+        +displayMessage() : void
+    }
+
+    class RBACController <<Control>> {
+        +viewRoles() : JSON
+        +updateRole(PersonID, NewRole) : boolean
+        -authenticate() : boolean
+        +logEvent() : boolean
+        +verifyRole() : boolean
+    }
+
+    class RBACModel <<Abstraction>> {
+        -rbacDB : RBACDatabase
+        +viewRoles() : JSON
+        +updateRole(PersonID, NewRole) : boolean
+    }
+
+    RBACSuccessDisplay --|> RBACStatusDisplay
+    RBACFailedDisplay --|> RBACStatusDisplay
+
+    RBACDisplay ..> RBACController
+    RBACDisplay ..> RBACStatusDisplay
+
+    RBACController ..> RBACModel
+
+    RBACModel *-- RBACDatabase
 }
-class AuthenticationErrorMessage{
-    -message: String
-    +displayMessage() : void
-}
-AuthenticationSuccessMessage --|> AuthenticationMessage
-AuthenticationErrorMessage --|> AuthenticationMessage
-
-DataValidator ..> DataController 
-DataDisplay "1" *-- "1" DataViews 
-DataDisplay ..> DisplayStatusMessage 
-DataController ..> AuthenticationController 
-AuthenticationController ..> AuthenticationMessage 
-
-class AlertController {
-    -alertInfoDB: Database
-    -alertThresholdDB: Database
-    +viewAlerts():JSON
-    -authenticate() : boolean
-    -verifyRole(): boolean
-    +modifyAlerts(): boolean
-    -triggerAlert(): void
-    -displayMessage(): void
-    -logEvent() : boolean
-}
-AlertController ..> DisplayStatusMessage 
-AlertController ..> AuthenticationController 
-
-class SubscriptionController {
-    -subscriptionsDB: Database
-    +notifySubscribers(): void
-    +subscribe(): boolean
-    -authenticate() : boolean
-    -logEvent() : boolean
-}
-AlertController ..> SubscriptionController 
-
-class LogController {
-    -logsDB: Database
-    +viewLogs() : JSON
-    -authenticate() : boolean
-    -verifyRole(): boolean
-    +logEvent() : boolean
-}
-AlertController ..> LogController 
-SubscriptionController ..> LogController 
-
-class RBACController {
-    -rbacDB: Database
-    +viewRoles() : List<Role>
-    +updateRole(PersonID,NewRole) : boolean
-    -authenticate() : boolean
-    +logEvent() : boolean
-}
-AlertController ..> RBACController 
-LogController ..> RBACController 
 
 
+class SCEMASController <<Control>>
+class SecurityController <<Control>>
 
+SCEMASController ..> DataController
+SCEMASController ..> SecurityController
+SCEMASController ..> LogController
 
+SecurityController ..> AuthenticationController
+SecurityController ..> RBACController
 
-@enduml
+DataController ..> SecurityController : authorizeDataAccess()
+DataController ..> DataValidatorController : validateData()
+DataController ..> AlertController : evaluateThresholds()
+
+DataValidatorController ..> DataController : validatedDataReady()
+
+AlertController ..> SecurityController : authorizeAlertModification()
+AlertController ..> SubscriptionController : notifySubscribers()
+
+LogController ..> SecurityController : authorizeLogAccess()
