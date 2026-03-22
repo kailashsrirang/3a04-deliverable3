@@ -86,9 +86,6 @@ package "Data Agent" {
         +displayMessage() : void
     }
 
-    class EnvironmentalDataDatabase {
-    }
-
     enum DataViews {
         PUBLIC
         PRIVATE
@@ -100,14 +97,11 @@ package "Data Agent" {
     DataDisplay ..> DataController
 
     DataController ..> DataModel : fetchData()
+    DataController ..> AuthenticationController
     DataController ..> DataValidatorController : validateData()
 
     DataValidatorController ..> DataValidatorModel
-    DataValidatorController ..> DataController : storeData()
 
-    DataModel *-- EnvironmentalDataDatabase
-
-    ' DataController *-- DataViews
 }
 
 
@@ -167,10 +161,12 @@ package "Alert Agent" {
     AlertDisplay <..> AlertController
 
     AlertController ..> AlertModel
-    AlertController ..> SubscriptionController : notifySubscribers()
+
+    
 
     AlertModel *-- AlertInfoDatabase
     AlertModel *-- AlertThresholdDatabase
+    DataController <.. AlertController : evaluateThresholds()
 }
 
 
@@ -217,6 +213,7 @@ package "Subscription Agent" {
     SubscriptionDisplay *.. SubscriptionStatusDisplay
 
     SubscriptionController ..> SubscriptionModel
+    SubscriptionController ..> AuthenticationController
 
 }
 
@@ -241,7 +238,7 @@ package "Log Agent" {
         +displayMessage() : void
     }
 
-    class LogController <<Control>> {
+    class LogController <<Control>>  {
         +viewLogs() : JSON
         -authenticate() : boolean
         -verifyRole() : boolean
@@ -261,6 +258,7 @@ package "Log Agent" {
     LogDisplay *..> LogStatusDisplay
 
     LogController ..> LogModel
+    LogController ..> AuthenticationController
 
 }
 
@@ -307,28 +305,14 @@ package "RBAC Agent" {
     RBACDisplay ..> RBACStatusDisplay
 
     RBACController ..> RBACModel
+    RBACController ..> AuthenticationController
 
-    RBACModel *-- RBACDatabase
 }
 
+    AlertController ..> RBACController : verifyRole()
+    AlertController ..> SubscriptionController : notifySubscribers()
+    RBACController ..> LogController : logEvent()
+    AlertController ..> LogController : logEvent()
+    SubscriptionController ..> LogController : logEvent()
 
-class SCEMASController <<Control>>
-class SecurityController <<Control>>
 
-SCEMASController ..> DataController
-SCEMASController ..> SecurityController
-SCEMASController ..> LogController
-
-SecurityController ..> AuthenticationController
-SecurityController ..> RBACController
-
-DataController ..> SecurityController : authorizeDataAccess()
-DataController ..> DataValidatorController : validateData()
-DataController ..> AlertController : evaluateThresholds()
-
-DataValidatorController ..> DataController : validatedDataReady()
-
-AlertController ..> SecurityController : authorizeAlertModification()
-AlertController ..> SubscriptionController : notifySubscribers()
-
-LogController ..> SecurityController : authorizeLogAccess()
