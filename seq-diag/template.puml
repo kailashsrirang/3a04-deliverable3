@@ -1,4 +1,4 @@
-' BE1. Request to view public environmental dRBACa
+' BE1. Request to view public environmental data
 @startuml
 
 hide footbox
@@ -11,28 +11,28 @@ skinparam ActorBackgroundColor transparent
 participant WB
 participant "Frontend" as FE
 participant "Backend" as BE
-participant "DRBACabase" as DB
+participant "Database" as DB
 
-activRBACe WB
-activRBACe FE
+activate WB
+activate FE
 WB -> FE : Click button
 
-activRBACe BE
+activate BE
 FE -> BE : Send request
 
-activRBACe DB
-BE -> DB : Query dRBACa
+activate DB
+BE -> DB : Query data
 
 DB --> BE : Return results
-deactivRBACe DB
+deactivate DB
 
 BE --> FE : Send response
-deactivRBACe BE
+deactivate BE
 
 FE --> WB : Show result
-deactivRBACe FE
+deactivate FE
 
-deactivRBACe WB
+deactivate WB
 
 
 
