@@ -22,27 +22,27 @@ package "Authentication Agent" {
         +setToken() : boolean
     }
 
-    abstract class AuthenticationMessage {
-        +displayMessage() : void
-    }
+    ' abstract class AuthenticationMessage {
+    '     +displayMessage() : void
+    ' }
 
-    class AuthenticationSuccessMessage {
-        -message : String
-        +displayMessage() : void
-    }
+    ' class AuthenticationSuccessMessage {
+    '     -message : String
+    '     +displayMessage() : void
+    ' }
 
-    class AuthenticationErrorMessage {
-        -message : String
-        +displayMessage() : void
-    }
+    ' class AuthenticationErrorMessage {
+    '     -message : String
+    '     +displayMessage() : void
+    ' }
 
-    AuthenticationSuccessMessage --|>AuthenticationMessage
-    AuthenticationErrorMessage --|> AuthenticationMessage
+    ' AuthenticationSuccessMessage --|>AuthenticationMessage
+    ' AuthenticationErrorMessage --|> AuthenticationMessage
 
-    AuthenticationDisplay ..> AuthenticationController
-    AuthenticationDisplay ..> AuthenticationMessage
+    AuthenticationDisplay <--> AuthenticationController
+    ' AuthenticationDisplay ..> AuthenticationMessage
 
-    AuthenticationController ..> AuthenticationModel
+    AuthenticationController --> AuthenticationModel
 }
 
 package "Data Agent" {
@@ -55,6 +55,10 @@ package "Data Agent" {
     class DataValidatorModel <<Abstraction>> {
         +checkDataFormat() : boolean
         +checkDataRange() : boolean
+    }
+     class DataValidatorDisplay <<Presentation>> {
+        -displayString: String
+        +displayMessage() : void
     }
 
     class DataController <<Control>> {
@@ -94,13 +98,15 @@ package "Data Agent" {
     WebDashBoard --|> DataDisplay
     ReadOnlyApi --|> DataDisplay
 
-    DataDisplay ..> DataController
+    DataDisplay <--> DataController
 
-    DataController ..> DataModel : fetchData()
-    DataController ..> AuthenticationController
-    DataController ..> DataValidatorController : validateData()
+    DataController --> DataModel
+    DataController *--> DataViews
+    DataController --> AuthenticationController
+    DataController <--> DataValidatorController
 
-    DataValidatorController ..> DataValidatorModel
+    DataValidatorController --> DataValidatorModel
+    DataValidatorController <--> DataValidatorDisplay
 
 }
 
@@ -139,34 +145,34 @@ package "Alert Agent" {
 
     }
 
-    abstract class AlertDisplayMessage <<Presentation>> {
-        +displayMessage() : void
-    }
+    ' abstract class AlertDisplayMessage <<Presentation>> {
+    '     +displayMessage() : void
+    ' }
 
-    class AlertSuccessMessage <<Presentation>> {
-        -message : String
-        +displayMessage() : void
-    }
+'     class AlertSuccessMessage <<Presentation>> {
+'         -message : String
+'         +displayMessage() : void
+'     }
 
-    class AlertErrorMessage <<Presentation>> {
-        -message : String
-        +displayMessage() : void
-}
+'     class AlertErrorMessage <<Presentation>> {
+'         -message : String
+'         +displayMessage() : void
+' }
 
-    AlertErrorMessage --|>  AlertDisplayMessage
-    AlertSuccessMessage --|> AlertDisplayMessage
-    AlertDisplay *-- AlertDisplayMessage
+    ' AlertErrorMessage --|>  AlertDisplayMessage
+    ' AlertSuccessMessage --|> AlertDisplayMessage
+    ' AlertDisplay *-- AlertDisplayMessage
 
 
-    AlertDisplay <..> AlertController
+    AlertDisplay <--> AlertController
 
-    AlertController ..> AlertModel
+    AlertController --> AlertModel
 
     
 
     AlertModel *-- AlertInfoDatabase
     AlertModel *-- AlertThresholdDatabase
-    DataController <.. AlertController : evaluateThresholds()
+    DataController <-- AlertController
 }
 
 
@@ -174,18 +180,18 @@ package "Alert Agent" {
 
 package "Subscription Agent" {
 
-    abstract class SubscriptionStatusDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
-    class SubscriptionSuccessDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
-    class SubscriptionFailedDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
+    ' abstract class SubscriptionStatusDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
+    ' class SubscriptionSuccessDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
+    ' class SubscriptionFailedDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
 
     class SubscriptionDisplay <<Presentation>> {
         +subscribe() : boolean
@@ -205,33 +211,33 @@ package "Subscription Agent" {
         +getSubscribers() : JSON
     }
 
-    SubscriptionSuccessDisplay --|> SubscriptionStatusDisplay
-    SubscriptionFailedDisplay --|> SubscriptionStatusDisplay
+    ' SubscriptionSuccessDisplay --|> SubscriptionStatusDisplay
+    ' SubscriptionFailedDisplay --|> SubscriptionStatusDisplay
 
 
-    SubscriptionDisplay ..> SubscriptionController
-    SubscriptionDisplay *.. SubscriptionStatusDisplay
+    SubscriptionDisplay <--> SubscriptionController
+    ' SubscriptionDisplay *.. SubscriptionStatusDisplay
 
-    SubscriptionController ..> SubscriptionModel
-    SubscriptionController ..> AuthenticationController
+    SubscriptionController --> SubscriptionModel
+    SubscriptionController --> AuthenticationController
 
 }
 
 
 package "Log Agent" {
 
-    abstract class LogStatusDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
-    class LogSuccessDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
-    class LogFailedDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
+    ' abstract class LogStatusDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
+    ' class LogSuccessDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
+    ' class LogFailedDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
 
     class LogDisplay <<Presentation>> {
         +viewLogs() : JSON
@@ -251,32 +257,32 @@ package "Log Agent" {
         +logEvent() : boolean
     }
 
-    LogSuccessDisplay --|> LogStatusDisplay
-    LogFailedDisplay --|> LogStatusDisplay
+    ' LogSuccessDisplay --|> LogStatusDisplay
+    ' LogFailedDisplay --|> LogStatusDisplay
 
-    LogDisplay ..> LogController
-    LogDisplay *..> LogStatusDisplay
+    LogDisplay <--> LogController
+    ' LogDisplay *..> LogStatusDisplay
 
-    LogController ..> LogModel
-    LogController ..> AuthenticationController
+    LogController --> LogModel
+    LogController --> AuthenticationController
 
 }
 
 
 package "RBAC Agent" {
 
-    abstract class RBACStatusDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
-    class RBACSuccessDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
-    class RBACFailedDisplay <<Presentation>> {
-        -displayString: String
-        +displayMessage() : void
-    }
+    ' abstract class RBACStatusDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
+    ' class RBACSuccessDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
+    ' class RBACFailedDisplay <<Presentation>> {
+    '     -displayString: String
+    '     +displayMessage() : void
+    ' }
 
     class RBACDisplay <<Presentation>> {
         +viewRoles() : JSON
@@ -298,21 +304,21 @@ package "RBAC Agent" {
         +updateRole(PersonID, NewRole) : boolean
     }
 
-    RBACSuccessDisplay --|> RBACStatusDisplay
-    RBACFailedDisplay --|> RBACStatusDisplay
+    ' RBACSuccessDisplay --|> RBACStatusDisplay
+    ' RBACFailedDisplay --|> RBACStatusDisplay
 
-    RBACDisplay ..> RBACController
-    RBACDisplay ..> RBACStatusDisplay
+    RBACDisplay <--> RBACController
+    ' RBACDisplay ..> RBACStatusDisplay
 
-    RBACController ..> RBACModel
-    RBACController ..> AuthenticationController
+    RBACController --> RBACModel
+    RBACController --> AuthenticationController
 
 }
 
-    AlertController ..> RBACController : verifyRole()
-    AlertController ..> SubscriptionController : notifySubscribers()
-    RBACController ..> LogController : logEvent()
-    AlertController ..> LogController : logEvent()
-    SubscriptionController ..> LogController : logEvent()
+    AlertController <--> RBACController
+    AlertController <--> SubscriptionController
+    RBACController --> LogController 
+    AlertController --> LogController 
+    SubscriptionController --> LogController 
 
 @enduml
