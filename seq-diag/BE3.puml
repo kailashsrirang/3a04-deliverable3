@@ -39,7 +39,7 @@ A -> AM : View alert threshold data
 AM -> RM : Validate user priveldges
 RM -> RBAC : Get user role data
 RBAC -> RM : Return user role data
-RM -> RM : Verfiy user privledges
+RM -> RM : Verify user privileges
 RM -> AM : Success
 AM -> AT : Get alert threshold data
 AT  -> AM : Return alert threshold data

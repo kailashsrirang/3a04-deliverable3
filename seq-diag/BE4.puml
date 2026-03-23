@@ -13,7 +13,7 @@ participant "Role Management" as RM
 participant "Authentication Management" as AM
 participant "Log Management" as LM
 participant "Logs" as DB
-participant "RBAC role" as RBAC
+participant "RBAC Roles" as RBAC
 
 
 activate A
@@ -33,7 +33,7 @@ RM -> A : Success
 A -> RM : View RBAC roles
 RM -> RBAC : Get user role data
 RBAC -> RM : Return user role data
-RM -> RM : Verfiy user privledges
+RM -> RM : Verify user privileges
 RM -> RBAC : Get requested data
 RBAC -> RM : Return requested data
 RM -> A : Return data

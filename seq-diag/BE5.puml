@@ -13,7 +13,7 @@ participant "Log Management" as LM
 participant "Authentication Management" as AM
 participant "Role Management" as RM
 participant "Logs" as DB
-participant "RBAC role" as RBAC
+participant "RBAC Roles" as RBAC
 
 
 activate A
@@ -30,9 +30,9 @@ AM -> AM : SSO
 AM -> LM : Authenticated
 LM -> A : Success
 A -> LM : View logs
-LM -> RM : Verify privledges
+LM -> RM : Verify privileges
 RM -> RBAC : Get user priveledges
-RBAC -> RM : Return user privledges
+RBAC -> RM : Return user privileges
 RM -> RM : Verify
 RM -> LM : Success
 LM -> DB : Get logs
