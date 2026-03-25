@@ -1,0 +1,32 @@
+/* LIGHT MODE (Default) */
+:root {
+  color-scheme: light; /* Forces Windows to give us control of inputs */
+  --bg-main: #f4f4f9;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-box: #f4f4f4;
+  --text-main: #333333;
+  --text-muted: #555555;
+  --border-color: #eeeeee;
+  --nav-bg: #2c3e50;
+}
+
+/* DARK MODE */
+[data-theme='dark'] {
+  color-scheme: dark; /* Smooth native scrollbars and inputs */
+  --bg-main: #121212;
+  --bg-card: #1e1e1e;
+  --bg-input: #2c3e50;
+  --bg-box: #2c3e50;
+  --text-main: #ecf0f1;
+  --text-muted: #bdc3c7;
+  --border-color: #444444;
+  --nav-bg: #000000;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
