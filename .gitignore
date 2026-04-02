@@ -1,0 +1,4 @@
+venv/
+scemas_mvp/venv/
+
+schemas.db
