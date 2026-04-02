@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-card">
+    <h1 class="page-title">Register External System</h1>
+    <p class="page-subtitle">
+        Subscribe an external service to a configured alert rule.
+    </p>
+</div>
+
+<section class="section-card">
+    <h3 class="section-title">Subscription Form</h3>
+    <p class="section-subtitle">Save the external system and chosen alert rule to the database.</p>
+
+    <form method="POST" class="form-card">
+        <div class="form-grid-2">
+            <div>
+                <label for="system_name">System Name</label>
+                <input type="text" id="system_name" name="system_name" required>
+            </div>
+
+            <div>
+                <label for="callback_url">Callback URL</label>
+                <input type="text" id="callback_url" name="callback_url" required>
+            </div>
+
+            <div>
+                <label for="alert_rule_id">Select Alert Rule</label>
+                <select id="alert_rule_id" name="alert_rule_id" required>
+                    <option value="">-- Select an alert --</option>
+                    {% for rule in alert_rules %}
+                    <option value="{{ rule['id'] }}">
+                        {{ rule["metric"] }} | {{ rule["zone"] }} | threshold: {{ rule["threshold"] }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-top: 12px;">
+            <button type="submit">Register Subscription</button>
+        </div>
+    </form>
+
+    {% if success %}
+    <div class="message success">{{ success }}</div>
+    {% endif %}
+
+    {% if error %}
+    <div class="message error">{{ error }}</div>
+    {% endif %}
+</section>
+{% endblock %}

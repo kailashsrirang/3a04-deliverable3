@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta http-equiv="refresh" content="10">
+
+<h2>Public Dashboard</h2>
+<p class="info-text">Aggregated, non-sensitive environmental information for public viewing.</p>
+
+
+
+<table>
+    <tr>
+        <th>Zone</th>
+        <th>Metric</th>
+        <th>Average Value</th>
+        <th>Unit</th>
+    </tr>
+    {% for row in rows %}
+    <tr>
+        <td>{{ row["zone"] }}</td>
+        <td>{{ row["metric"] }}</td>
+        <td>{{ "%.2f"|format(row["avg_value"]) }}</td>
+        <td>{{ row["unit"] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p class="meta-line">Last refreshed: {{ last_updated }}</p>
+
+
+<p>
+    <a href="{{ url_for('external_register') }}">Register External System</a>
+</p>
+{% endblock %}

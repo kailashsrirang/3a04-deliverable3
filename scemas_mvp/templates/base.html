@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCEMAS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="site-wrap">
+        <header class="hero-shell">
+            <div class="hero-card">
+                <h1 class="hero-title">SCEMAS</h1>
+                <p class="hero-subtitle">Smart City Environmental Monitoring &amp; Alert System</p>
+
+                <nav class="top-nav">
+                    <a href="{{ url_for('login') }}">Back to Login</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="page-container">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+
+</html>

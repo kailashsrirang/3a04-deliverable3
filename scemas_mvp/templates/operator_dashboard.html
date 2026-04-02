@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<meta http-equiv="refresh" content="10">
+
+<h2>Operator Dashboard</h2>
+<p class="info-text">Detailed operational telemetry and triggered alerts.</p>
+
+<h3>Recent Telemetry</h3>
+<table>
+    <tr>
+        <th>Sensor</th>
+        <th>Zone</th>
+        <th>Metric</th>
+        <th>Value</th>
+        <th>Unit</th>
+        <th>Timestamp</th>
+    </tr>
+    {% for row in telemetry %}
+    <tr>
+        <td>{{ row["sensor_id"] }}</td>
+        <td>{{ row["zone"] }}</td>
+        <td>{{ row["metric"] }}</td>
+        <td>{{ row["value"] }}</td>
+        <td>{{ row["unit"] }}</td>
+        <td>{{ row["timestamp"] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Active Alerts</h3>
+{% if alerts %}
+<table>
+    <tr>
+        <th>Metric</th>
+        <th>Zone</th>
+        <th>Current Value</th>
+        <th>Threshold</th>
+        <th>Status</th>
+        <th>Timestamp</th>
+    </tr>
+    {% for alert in alerts %}
+    <tr>
+        <td>{{ alert["metric"] }}</td>
+        <td>{{ alert["zone"] }}</td>
+        <td>{{ alert["current_value"] }}</td>
+        <td>{{ alert["threshold"] }}</td>
+        <td>{{ alert["status"] }}</td>
+        <td>{{ alert["timestamp"] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No alerts triggered.</p>
+{% endif %}
+<p class="meta-line">Last refreshed: {{ last_updated }}</p>
+
+{% endblock %}

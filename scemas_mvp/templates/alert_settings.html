@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Admin Alert Settings</h2>
+<p class="info-text">Create new alert rules, update thresholds, and review external subscriptions.</p>
+
+<h3>Create New Alert Rule</h3>
+<form method="POST" class="card-section inline-form">
+    <input type="hidden" name="form_type" value="create">
+
+    <div>
+        <label for="metric">Metric</label><br>
+        <select name="metric" id="metric" required>
+            {% for metric in available_metrics %}
+            <option value="{{ metric }}">{{ metric }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="zone">Zone</label><br>
+        <select name="zone" id="zone" required>
+            {% for zone in available_zones %}
+            <option value="{{ zone }}">{{ zone }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="threshold">Threshold</label><br>
+        <input type="number" step="any" name="threshold" id="threshold" required>
+    </div>
+
+    <div>
+        <button type="submit">Add Alert Rule</button>
+    </div>
+</form>
+
+<h3>Existing Alert Threshold Rules</h3>
+{% if rules %}
+{% for rule in rules %}
+<form method="POST" class="card-section inline-form">
+    <input type="hidden" name="form_type" value="update">
+    <input type="hidden" name="rule_id" value="{{ rule['id'] }}">
+
+    <div>
+        <strong>Metric</strong><br>
+        {{ rule["metric"] }}
+    </div>
+
+    <div>
+        <strong>Zone</strong><br>
+        {{ rule["zone"] }}
+    </div>
+
+    <div>
+        <label for="threshold_{{ rule['id'] }}">Threshold</label><br>
+        <input type="number" step="any" id="threshold_{{ rule['id'] }}" name="threshold" value="{{ rule['threshold'] }}"
+            required>
+    </div>
+
+    <div>
+        <button type="submit">Update Threshold</button>
+    </div>
+</form>
+{% endfor %}
+{% else %}
+<p>No alert rules found.</p>
+{% endif %}
+
+<h3>External Systems Subscribed to Each Alert</h3>
+{% if subscriptions %}
+<table>
+    <tr>
+        <th>Alert Rule</th>
+        <th>Threshold</th>
+        <th>External System</th>
+        <th>Callback URL</th>
+    </tr>
+    {% for row in subscriptions %}
+    <tr>
+        <td>{{ row["metric"] }} | {{ row["zone"] }}</td>
+        <td>{{ row["threshold"] }}</td>
+        <td>
+            {% if row["system_name"] %}
+            {{ row["system_name"] }}
+            {% else %}
+            No subscribers
+            {% endif %}
+        </td>
+        <td>
+            {% if row["callback_url"] %}
+            {{ row["callback_url"] }}
+            {% else %}
+            -
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No subscriptions found.</p>
+{% endif %}
+{% endblock %}

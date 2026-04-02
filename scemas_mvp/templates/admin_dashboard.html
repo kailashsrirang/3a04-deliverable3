@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Admin Dashboard</h2>
+<p class="info-text">Manage alert thresholds, RBAC roles, and audit logs.</p>
+
+<ul class="simple-list">
+    <li><a href="{{ url_for('admin_alert_settings') }}">Manage Alert Thresholds</a></li>
+    <li><a href="{{ url_for('admin_rbac') }}">Manage RBAC Roles</a></li>
+    <li><a href="{{ url_for('admin_logs') }}">View Audit Logs</a></li>
+</ul>
+{% endblock %}

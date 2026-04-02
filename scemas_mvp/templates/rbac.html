@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>RBAC Management</h2>
+<p class="info-text">View users and update their current system role.</p>
+
+{% if users %}
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Current Role</th>
+        <th>Change Role</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+        <td>{{ user["id"] }}</td>
+        <td>{{ user["username"] }}</td>
+        <td>{{ user["role"] }}</td>
+        <td>
+            <form method="POST" class="inline-form">
+                <input type="hidden" name="user_id" value="{{ user['id'] }}">
+
+                <div>
+                    <select name="role" required>
+                        <option value="public" {% if user["role"]=="public" %}selected{% endif %}>public</option>
+                        <option value="operator" {% if user["role"]=="operator" %}selected{% endif %}>operator</option>
+                        <option value="admin" {% if user["role"]=="admin" %}selected{% endif %}>admin</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit">Update Role</button>
+                </div>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No users found.</p>
+{% endif %}
+{% endblock %}

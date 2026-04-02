@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-box">
+    <h2>Login</h2>
+    <p class="info-text">Enter a demo username to access the appropriate dashboard.</p>
+
+    <form method="POST">
+        <label for="username">Username</label><br>
+        <input type="text" name="username" id="username" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+
+    <div class="login-help">
+        <strong>Demo users:</strong>
+        <ul class="simple-list">
+            <li><strong>public</strong> — public dashboard</li>
+            <li><strong>operator</strong> — operator dashboard</li>
+            <li><strong>admin</strong> — admin dashboard</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
