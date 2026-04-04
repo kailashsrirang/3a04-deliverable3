@@ -3,6 +3,7 @@
 {% block content %}
 <h2>RBAC Management</h2>
 <p class="info-text">View users and update their current system role.</p>
+<p><a href="{{ url_for('admin_dashboard') }}">Back to Admin Dashboard</a></p>
 
 {% if users %}
 <table>

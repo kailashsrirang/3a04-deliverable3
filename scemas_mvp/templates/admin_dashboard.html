@@ -3,6 +3,7 @@
 {% block content %}
 <h2>Admin Dashboard</h2>
 <p class="info-text">Manage alert thresholds, RBAC roles, and audit logs.</p>
+<p><a href="{{ url_for('login') }}">Logout</a></p>
 
 <ul class="simple-list">
     <li><a href="{{ url_for('admin_alert_settings') }}">Manage Alert Thresholds</a></li>

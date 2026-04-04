@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="signage-content" style="font-size: 2em; text-align: center; padding: 20px;">
+    <h1>SCEMAS Public Environmental Summary</h1>
+    <div id="summaries" style="margin: 20px 0;"></div>
+    <h2>Zone-Level Averages</h2>
+    <table id="aggregates-table" style="margin: 0 auto; border-collapse: collapse; font-size: 1.5em;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 10px;">Zone</th>
+                <th style="border: 1px solid #000; padding: 10px;">Metric</th>
+                <th style="border: 1px solid #000; padding: 10px;">Average</th>
+                <th style="border: 1px solid #000; padding: 10px;">Unit</th>
+            </tr>
+        </thead>
+        <tbody id="aggregates-body"></tbody>
+    </table>
+    <p id="last-updated" style="margin-top: 20px; font-size: 1em;"></p>
+</div>
+
+<script>
+function updateData() {
+    fetch('/api/public-data')
+        .then(response => response.json())
+        .then(data => {
+            // Update summaries
+            const summariesDiv = document.getElementById('summaries');
+            summariesDiv.innerHTML = '';
+            for (const [metric, info] of Object.entries(data.summaries)) {
+                const card = document.createElement('div');
+                card.style.display = 'inline-block';
+                card.style.margin = '10px';
+                card.style.padding = '20px';
+                card.style.border = '1px solid #000';
+                card.style.borderRadius = '10px';
+                card.innerHTML = `<h3>${metric.charAt(0).toUpperCase() + metric.slice(1)}</h3><p>${info.avg.toFixed(2)} ${info.unit}</p>`;
+                summariesDiv.appendChild(card);
+            }
+
+            // Update aggregates table
+            const tbody = document.getElementById('aggregates-body');
+            tbody.innerHTML = '';
+            data.aggregates.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border: 1px solid #000; padding: 10px;">${row.zone}</td>
+                    <td style="border: 1px solid #000; padding: 10px;">${row.metric}</td>
+                    <td style="border: 1px solid #000; padding: 10px;">${row.avg_value.toFixed(2)}</td>
+                    <td style="border: 1px solid #000; padding: 10px;">${row.unit}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update last updated
+            const now = new Date();
+            document.getElementById('last-updated').textContent = `Last updated: ${now.toLocaleString()}`;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+// Initial load
+updateData();
+
+// Refresh every 20 seconds
+setInterval(updateData, 20000);
+</script>
+
+{% endblock %}

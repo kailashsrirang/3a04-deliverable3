@@ -1,7 +1,10 @@
 from abstractions.user_model import get_user_by_username
 from abstractions.log_model import log_action
 
-def login_user(username):
+def login_user(username, access_code):
+    if access_code != "SCEMAS-DEMO":
+        return None
+
     username = username.strip().lower()
     user = get_user_by_username(username)
 
