@@ -67,7 +67,19 @@ def evaluate_telemetry_item(item):
                 "active",
                 item["timestamp"]
             )
-            # Notify subscribed external systems
+            # log triggered alert
+            log_action(
+                "ALERT_TRIGGERED",
+                (
+                    f"Triggered alert for metric={item['metric']}, "
+                    f"zone={item['zone']}, "
+                    f"value={item['value']}, "
+                    f"threshold={effective_threshold}, "
+                    f"timestamp={item['timestamp']}"
+                )
+            )
+
+            # notify subscribed external systems
             systems = get_external_systems_by_rule_id(rule["id"])
             for system in systems:
                 log_action(
