@@ -3,6 +3,7 @@ import sys
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from utils.resource_helper import resource_path
 from abstractions.db import ensure_db
@@ -32,7 +33,10 @@ app = Flask(
     static_folder=resource_path("static")
 )
 
-limiter = Limiter(app=app)
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app
+)
 
 @app.route("/")
 def home():
@@ -103,7 +107,7 @@ def operator_dashboard():
     active_alerts_count = len([a for a in alerts if a['status'] == 'active'])
     total_telemetry = len(telemetry)
     latest_timestamp = max((t['timestamp'] for t in telemetry), default=None)
-    total_subscriptions = len([s for s in subscriptions if s.get('system_id')])
+    total_subscriptions = len([s for s in subscriptions if s['system_id'] is not None])
     # For chart: counts of alerts by status
     status_counts = {}
     for a in alerts:
@@ -149,6 +153,30 @@ def admin_rbac():
 @app.route("/admin/logs")
 def admin_logs():
     return render_template("logs.html", logs=fetch_logs())
+
+@app.route("/signage")
+def signage():
+    rows, summaries = fetch_public_data()
+    return render_template("signage.html", summaries=summaries)
+
+@app.route("/api/public-data")
+def api_public_data():
+    rows, summaries = fetch_public_data()
+    return jsonify({
+        "aggregates": [dict(row) for row in rows],
+        "summaries": summaries,
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+@app.route("/acknowledge/<int:alert_id>", methods=["POST"])
+def acknowledge_alert_route(alert_id):
+    acknowledge_alert(alert_id)
+    return redirect(url_for("operator_dashboard"))
+
+@app.route("/resolve/<int:alert_id>", methods=["POST"])
+def resolve_alert_route(alert_id):
+    resolve_alert(alert_id)
+    return redirect(url_for("operator_dashboard"))
 
 if __name__ == "__main__":
     ensure_db()

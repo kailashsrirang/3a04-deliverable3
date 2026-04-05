@@ -39,7 +39,11 @@ def handle_alert_form(form):
         threshold = form["threshold"]
         update_alert_threshold(rule_id, threshold)
         log_action(
-    get_effective_threshold(rule):
+            "UPDATE_ALERT_RULE",
+            f"Updated alert rule {rule_id} with threshold {threshold}"
+        )
+
+def get_effective_threshold(rule):
     if rule["metric"] == "noise":
         now = datetime.now()
         hour = now.hour
@@ -69,26 +73,12 @@ def evaluate_telemetry_item(item):
                 log_action(
                     "NOTIFY_EXTERNAL_SYSTEM",
                     f"System '{system['system_name']}' notified for {rule['metric']} alert in {rule['zone']}"
-                create_alert(
-                item["metric"],
-                item["zone"],
-                item["value"],
-                rule["threshold"],
-                "active",
-                item["timestamp"]
-            )
+                )
 
 def fetch_alerts():
     return get_all_alerts()
 
-def acknowled
-            # Notify subscribed external systems
-            systems = get_external_systems_by_rule_id(rule["id"])
-            for system in systems:
-                log_action(
-                    "NOTIFY_EXTERNAL_SYSTEM",
-                    f"System '{system['system_name']}' notified for {rule['metric']} alert in {rule['zone']}"
-                )ge_alert(alert_id):
+def acknowledge_alert(alert_id):
     update_alert_status(alert_id, "acknowledged")
     log_action("ALERT_ACKNOWLEDGED", f"Alert {alert_id} acknowledged")
 
