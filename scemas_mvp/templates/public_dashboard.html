@@ -1,26 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <meta http-equiv="refresh" content="10">
 
 <h2>Public Environmental Summary</h2>
-<p class="info-text">Aggregated area-level averages for public environmental monitoring. Values shown are zone-averaged, not individual sensor readings.</p>
+<p class="info-text">
+    Aggregated area-level averages for public environmental monitoring.
+    Values shown are zone-averaged, not individual sensor readings.
+</p>
 
-<!-- <div class="summary-cards">
-    {% for metric, data in summaries.items() %}
-    <div class="card">
-        <h3>{{ metric.capitalize() }}</h3>
-        <p>{{ "%.2f"|format(data.avg) }} {{ data.unit }}</p>
+<div class="critical-action-banner">
+    <div>
+        <h3 class="critical-action-title">External Alert Registration</h3>
+        <p class="critical-action-text">
+            Register an external system to receive alert notifications.
+        </p>
     </div>
-    {% endfor %}
-</div> -->
+    <a class="primary-cta-link" href="{{ url_for('external_register') }}">
+        Register External System
+    </a>
+</div>
 
-<h3>Zone-Level Averages</h3>
 <table>
     <tr>
         <th>Zone</th>
         <th>Metric</th>
-        <th>Zone Average</th>
+        <th>Average Value</th>
         <th>Unit</th>
     </tr>
     {% for row in rows %}
@@ -32,9 +38,7 @@
     </tr>
     {% endfor %}
 </table>
+
 <p class="meta-line">Last refreshed: {{ last_updated }}</p>
 
-<p>
-    <a href="{{ url_for('external_register') }}">Register External System</a>
-</p>
 {% endblock %}
