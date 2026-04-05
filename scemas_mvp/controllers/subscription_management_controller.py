@@ -1,4 +1,4 @@
-from abstractions.external_system_model import create_external_system, get_external_systems_by_alert
+from abstractions.external_system_model import create_external_system, get_external_systems_by_alert, delete_external_system
 from abstractions.alert_rule_model import get_all_alert_rules, get_alert_rule_by_id
 from abstractions.log_model import log_action
 
@@ -23,3 +23,16 @@ def register_external_system(form):
 
 def fetch_subscriptions():
     return get_external_systems_by_alert()
+
+def delete_external_subscription(system_id):
+    # Get system details before deletion for logging
+    subscriptions = get_external_systems_by_alert()
+    system = next((s for s in subscriptions if s['system_id'] == system_id), None)
+    if system:
+        delete_external_system(system_id)
+        log_action(
+            "EXTERNAL_SUBSCRIPTION_REMOVED",
+            f"System '{system['system_name']}' unsubscribed from {system['metric']} alert in {system['zone']}"
+        )
+        return True, "Subscription removed successfully."
+    return False, "Subscription not found."

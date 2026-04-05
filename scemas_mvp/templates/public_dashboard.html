@@ -1,12 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <meta http-equiv="refresh" content="10">
 
-<h2>Public Dashboard</h2>
-<p class="info-text">Aggregated, non-sensitive environmental information for public viewing.</p>
+<h2>Public Environmental Summary</h2>
+<p class="info-text">
+    Aggregated area-level averages for public environmental monitoring.
+    Values shown are zone-averaged, not individual sensor readings.
+</p>
 
-
+<div class="critical-action-banner">
+    <div>
+        <h3 class="critical-action-title">External Alert Registration</h3>
+        <p class="critical-action-text">
+            Register an external system to receive alert notifications.
+        </p>
+    </div>
+    <a class="primary-cta-link" href="{{ url_for('external_register') }}">
+        Register External System
+    </a>
+</div>
 
 <table>
     <tr>
@@ -24,10 +38,7 @@
     </tr>
     {% endfor %}
 </table>
+
 <p class="meta-line">Last refreshed: {{ last_updated }}</p>
 
-
-<p>
-    <a href="{{ url_for('external_register') }}">Register External System</a>
-</p>
 {% endblock %}

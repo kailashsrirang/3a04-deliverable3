@@ -23,3 +23,23 @@ def get_all_alerts():
     """).fetchall()
     conn.close()
     return alerts
+
+def active_alert_exists(metric, zone):
+    conn = get_db_connection()
+    alert = conn.execute("""
+        SELECT 1 FROM alerts
+        WHERE metric = ? AND zone = ? AND status = 'active'
+        LIMIT 1
+    """, (metric, zone)).fetchone()
+    conn.close()
+    return alert is not None
+
+def update_alert_status(alert_id, status):
+    conn = get_db_connection()
+    conn.execute("""
+        UPDATE alerts
+        SET status = ?
+        WHERE id = ?
+    """, (status, alert_id))
+    conn.commit()
+    conn.close()

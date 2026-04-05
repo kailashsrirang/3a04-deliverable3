@@ -5,6 +5,29 @@
 
 <h2>Operator Dashboard</h2>
 <p class="info-text">Detailed operational telemetry and triggered alerts.</p>
+<p><a href="{{ url_for('login') }}">Logout</a></p>
+
+<div class="summary-cards">
+    <div class="card">
+        <h3>Active Alerts</h3>
+        <p>{{ active_alerts_count }}</p>
+    </div>
+    <div class="card">
+        <h3>Total Telemetry Records</h3>
+        <p>{{ total_telemetry }}</p>
+    </div>
+    <div class="card">
+        <h3>Latest Telemetry</h3>
+        <p>{{ latest_timestamp or 'N/A' }}</p>
+    </div>
+    <div class="card">
+        <h3>External Subscriptions</h3>
+        <p>{{ total_subscriptions }}</p>
+    </div>
+</div>
+
+<h3>Alert Status Overview</h3>
+<canvas id="alertChart" width="400" height="200"></canvas>
 
 <h3>Recent Telemetry</h3>
 <table>
@@ -28,7 +51,7 @@
     {% endfor %}
 </table>
 
-<h3>Active Alerts</h3>
+<h3>Alerts</h3>
 {% if alerts %}
 <table>
     <tr>
@@ -38,6 +61,7 @@
         <th>Threshold</th>
         <th>Status</th>
         <th>Timestamp</th>
+        <th>Actions</th>
     </tr>
     {% for alert in alerts %}
     <tr>
@@ -47,12 +71,48 @@
         <td>{{ alert["threshold"] }}</td>
         <td>{{ alert["status"] }}</td>
         <td>{{ alert["timestamp"] }}</td>
+        <td>
+            {% if alert["status"] == "active" %}
+                <form action="{{ url_for('acknowledge_alert_route', alert_id=alert['id']) }}" method="post" style="display:inline;">
+                    <button type="submit">Acknowledge</button>
+                </form>
+            {% elif alert["status"] == "acknowledged" %}
+                <form action="{{ url_for('resolve_alert_route', alert_id=alert['id']) }}" method="post" style="display:inline;">
+                    <button type="submit">Resolve</button>
+                </form>
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
 </table>
 {% else %}
-<p>No alerts triggered.</p>
+<p>No alerts.</p>
 {% endif %}
 <p class="meta-line">Last refreshed: {{ last_updated }}</p>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('alertChart').getContext('2d');
+const alertChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ status_counts.keys() | list | tojson }},
+        datasets: [{
+            label: 'Alert Counts by Status',
+            data: {{ status_counts.values() | list }},
+            backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 205, 86, 0.2)'],
+            borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 205, 86, 1)'],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
 
 {% endblock %}

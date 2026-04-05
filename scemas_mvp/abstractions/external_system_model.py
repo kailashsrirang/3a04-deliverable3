@@ -27,3 +27,22 @@ def get_external_systems_by_alert():
     """).fetchall()
     conn.close()
     return rows
+
+def get_external_systems_by_rule_id(rule_id):
+    conn = get_db_connection()
+    systems = conn.execute("""
+        SELECT system_name, callback_url
+        FROM external_systems
+        WHERE alert_rule_id = ?
+    """, (rule_id,)).fetchall()
+    conn.close()
+    return systems
+
+def delete_external_system(system_id):
+    conn = get_db_connection()
+    conn.execute("""
+        DELETE FROM external_systems
+        WHERE id = ?
+    """, (system_id,))
+    conn.commit()
+    conn.close()

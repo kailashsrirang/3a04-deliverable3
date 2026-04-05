@@ -3,6 +3,7 @@
 {% block content %}
 <h2>System Logs</h2>
 <p class="info-text">Audit trail of activity performed in the demo system.</p>
+<p><a href="{{ url_for('admin_dashboard') }}">Back to Admin Dashboard</a></p>
 
 {% if logs %}
 <table>

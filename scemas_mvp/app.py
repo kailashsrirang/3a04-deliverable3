@@ -1,7 +1,9 @@
 import os
 import sys
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from utils.resource_helper import resource_path
 from abstractions.db import ensure_db
@@ -12,12 +14,15 @@ from controllers.alert_management_controller import (
     fetch_all_rules,
     fetch_available_metrics,
     fetch_available_zones,
-    handle_alert_form
+    handle_alert_form,
+    acknowledge_alert,
+    resolve_alert
 )
 from controllers.subscription_management_controller import (
     fetch_alert_rules_for_subscription,
     register_external_system,
-    fetch_subscriptions
+    fetch_subscriptions,
+    delete_external_subscription
 )
 from controllers.role_management_controller import fetch_all_users, change_user_role
 from controllers.log_management_controller import fetch_logs
@@ -28,6 +33,11 @@ app = Flask(
     static_folder=resource_path("static")
 )
 
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app
+)
+
 @app.route("/")
 def home():
     return redirect(url_for("login"))
@@ -35,9 +45,9 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = login_user(request.form["username"])
+        user = login_user(request.form["username"], request.form["access_code"])
         if not user:
-            return render_template("login.html", error="Invalid username")
+            return render_template("login.html", error="Invalid enterprise ID or access code")
 
         if user["role"] == "public":
             return redirect(url_for("public_dashboard"))
@@ -47,32 +57,44 @@ def login():
             return redirect(url_for("admin_dashboard"))
 
     return render_template("login.html")
+@limiter.limit("30 per minute")
 
 @app.route("/public")
 def public_dashboard():
-    rows = fetch_public_data()
+    rows, summaries = fetch_public_data()
     return render_template(
         "public_dashboard.html",
         rows=rows,
+        summaries=summaries,
         last_updated=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )
 
+@limiter.limit("10 per minute")
 @app.route("/public/register", methods=["GET", "POST"])
 def external_register():
     success = None
     error = None
 
     if request.method == "POST":
-        ok, message = register_external_system(request.form)
-        if ok:
-            success = message
-        else:
-            error = message
+        if "system_name" in request.form:  # Registration
+            ok, message = register_external_system(request.form)
+            if ok:
+                success = message
+            else:
+                error = message
+        elif "delete_system_id" in request.form:  # Deletion
+            ok, message = delete_external_subscription(int(request.form["delete_system_id"]))
+            if ok:
+                success = message
+            else:
+                error = message
 
     alert_rules = fetch_alert_rules_for_subscription()
+    subscriptions = fetch_subscriptions()
     return render_template(
         "external_register.html",
         alert_rules=alert_rules,
+        subscriptions=subscriptions,
         success=success,
         error=error
     )
@@ -81,10 +103,26 @@ def external_register():
 def operator_dashboard():
     telemetry = fetch_operator_telemetry()
     alerts = fetch_alerts()
+    subscriptions = fetch_subscriptions()
+    active_alerts_count = len([a for a in alerts if a['status'] == 'active'])
+    total_telemetry = len(telemetry)
+    latest_timestamp = max((t['timestamp'] for t in telemetry), default=None)
+    total_subscriptions = len([s for s in subscriptions if s['system_id'] is not None])
+    # For chart: counts of alerts by status
+    status_counts = {}
+    for a in alerts:
+        status = a['status']
+        status_counts[status] = status_counts.get(status, 0) + 1
     return render_template(
         "operator_dashboard.html",
         telemetry=telemetry,
         alerts=alerts,
+        subscriptions=subscriptions,
+        active_alerts_count=active_alerts_count,
+        total_telemetry=total_telemetry,
+        latest_timestamp=latest_timestamp,
+        total_subscriptions=total_subscriptions,
+        status_counts=status_counts,
         last_updated=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )
 
@@ -115,6 +153,30 @@ def admin_rbac():
 @app.route("/admin/logs")
 def admin_logs():
     return render_template("logs.html", logs=fetch_logs())
+
+@app.route("/signage")
+def signage():
+    rows, summaries = fetch_public_data()
+    return render_template("signage.html", summaries=summaries)
+
+@app.route("/api/public-data")
+def api_public_data():
+    rows, summaries = fetch_public_data()
+    return jsonify({
+        "aggregates": [dict(row) for row in rows],
+        "summaries": summaries,
+        "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    })
+
+@app.route("/acknowledge/<int:alert_id>", methods=["POST"])
+def acknowledge_alert_route(alert_id):
+    acknowledge_alert(alert_id)
+    return redirect(url_for("operator_dashboard"))
+
+@app.route("/resolve/<int:alert_id>", methods=["POST"])
+def resolve_alert_route(alert_id):
+    resolve_alert(alert_id)
+    return redirect(url_for("operator_dashboard"))
 
 if __name__ == "__main__":
     ensure_db()
