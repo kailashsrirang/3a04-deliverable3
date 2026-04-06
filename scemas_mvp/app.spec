@@ -5,7 +5,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[('templates', 'templates'), ('static', 'static'), ('telemetry.json', '.'), ('scemas.db', '.')],
+    datas=[('templates', 'templates'), ('static', 'static'), ('telemetry.json', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
